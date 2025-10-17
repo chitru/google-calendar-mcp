@@ -33,8 +33,8 @@ A Model Context Protocol (MCP) server that provides Google Calendar integration 
    - Select "Desktop app" as the application type (Important!)
    - Save the auth key, you'll need to add its path to the JSON in the next step
    - Add your email address as a test user under the [Audience screen](https://console.cloud.google.com/auth/audience)
-      - Note: it might take a few minutes for the test user to be added. The OAuth consent will not allow you to proceed until the test user has propagated.
-      - Note about test mode: While an app is in test mode the auth tokens will expire after 1 week and need to be refreshed (see Re-authentication section below).
+     - Note: it might take a few minutes for the test user to be added. The OAuth consent will not allow you to proceed until the test user has propagated.
+     - Note about test mode: While an app is in test mode the auth tokens will expire after 1 week and need to be refreshed (see Re-authentication section below).
 
 ### Installation
 
@@ -44,6 +44,7 @@ Add to your Claude Desktop configuration:
 
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
 ```json
 {
   "mcpServers": {
@@ -82,6 +83,18 @@ docker compose up
 
 See the [Docker deployment guide](docs/docker.md) for detailed configuration options including HTTP transport mode.
 
+**Option 4: Environment Variables (Recommended for Deployment)**
+
+Instead of using a JSON file, you can set environment variables:
+
+```bash
+export GOOGLE_CLIENT_ID="your_client_id_here.apps.googleusercontent.com"
+export GOOGLE_CLIENT_SECRET="your_client_secret_here"
+export GOOGLE_REDIRECT_URI="https://your-app.onrender.com/oauth2callback"
+```
+
+This is especially useful for cloud deployments like Render.com, Railway, or Heroku where you can set environment variables securely in the platform's dashboard.
+
 ### First Run
 
 1. Start Claude Desktop
@@ -94,20 +107,23 @@ See the [Docker deployment guide](docs/docker.md) for detailed configuration opt
 If you're in test mode (default), tokens expire after 7 days. If you are using a client like Claude Desktop it should open up a browser window to automatically re-auth. However, if you see authentication errors you can also resolve by following these steps:
 
 **For npx users:**
+
 ```bash
 export GOOGLE_OAUTH_CREDENTIALS="/path/to/your/gcp-oauth.keys.json"
 npx @cocal/google-calendar-mcp auth
 ```
 
 **For local installation:**
+
 ```bash
 npm run auth
 ```
 
 **To avoid weekly re-authentication**, publish your app to production mode (without verification):
+
 1. Go to Google Cloud Console → "APIs & Services" → "OAuth consent screen"
 2. Click "PUBLISH APP" and confirm
-3. Your tokens will no longer expire after 7 days but Google will show a more threatning warning when connecting to the app about it being unverified. 
+3. Your tokens will no longer expire after 7 days but Google will show a more threatning warning when connecting to the app about it being unverified.
 
 See [Authentication Guide](docs/authentication.md#moving-to-production-mode-recommended) for details.
 
@@ -116,15 +132,18 @@ See [Authentication Guide](docs/authentication.md#moving-to-production-mode-reco
 Along with the normal capabilities you would expect for a calendar integration you can also do really dynamic, multi-step processes like:
 
 1. **Cross-calendar availability**:
+
    ```
    Please provide availability looking at both my personal and work calendar for this upcoming week.
    I am looking for a good time to meet with someone in London for 1 hr.
    ```
 
 2. Add events from screenshots, images and other data sources:
+
    ```
    Add this event to my calendar based on the attached screenshot.
    ```
+
    Supported image formats: PNG, JPEG, GIF
    Images can contain event details like date, time, location, and description
 
@@ -144,16 +163,16 @@ Along with the normal capabilities you would expect for a calendar integration y
 
 ## Available Tools
 
-| Tool | Description |
-|------|-------------|
-| `list-calendars` | List all available calendars |
-| `list-events` | List events with date filtering |
-| `search-events` | Search events by text query |
-| `create-event` | Create new calendar events |
-| `update-event` | Update existing events |
-| `delete-event` | Delete events |
-| `get-freebusy` | Check availability across calendars, including external calendars |
-| `list-colors` | List available event colors |
+| Tool             | Description                                                       |
+| ---------------- | ----------------------------------------------------------------- |
+| `list-calendars` | List all available calendars                                      |
+| `list-events`    | List events with date filtering                                   |
+| `search-events`  | Search events by text query                                       |
+| `create-event`   | Create new calendar events                                        |
+| `update-event`   | Update existing events                                            |
+| `delete-event`   | Delete events                                                     |
+| `get-freebusy`   | Check availability across calendars, including external calendars |
+| `list-colors`    | List available event colors                                       |
 
 ## Documentation
 
@@ -169,13 +188,14 @@ Along with the normal capabilities you would expect for a calendar integration y
 ## Configuration
 
 **Environment Variables:**
+
 - `GOOGLE_OAUTH_CREDENTIALS` - Path to OAuth credentials file
 - `GOOGLE_CALENDAR_MCP_TOKEN_PATH` - Custom token storage location (optional)
 
 **Claude Desktop Config Location:**
+
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-
 
 ## Security
 
@@ -186,10 +206,12 @@ Along with the normal capabilities you would expect for a calendar integration y
 ### Troubleshooting
 
 1. **OAuth Credentials File Not Found:**
+
    - For npx users: You **must** specify the credentials file path using `GOOGLE_OAUTH_CREDENTIALS`
    - Verify file paths are absolute and accessible
 
 2. **Authentication Errors:**
+
    - Ensure your credentials file contains credentials for a **Desktop App** type
    - Verify your user email is added as a **Test User** in the Google Cloud OAuth Consent screen
    - Try deleting saved tokens and re-authenticating
@@ -200,6 +222,7 @@ Along with the normal capabilities you would expect for a calendar integration y
    - Check Node.js version (use LTS)
    - Delete the `build/` directory and run `npm run build`
 4. **"Something went wrong" screen during browser authentication**
+
    - Perform manual authentication per the below steps
    - Use a Chromium-based browser to open the authentication URL. Test app authentication may not be supported on some non-Chromium browsers.
 
@@ -210,7 +233,9 @@ Along with the normal capabilities you would expect for a calendar integration y
    - The file should have format: `{"installed": {"project_id": "your-project-id", ...}}`
 
 ### Manual Authentication
+
 For re-authentication or troubleshooting:
+
 ```bash
 # For npx installations
 export GOOGLE_OAUTH_CREDENTIALS="/path/to/your/credentials.json"
